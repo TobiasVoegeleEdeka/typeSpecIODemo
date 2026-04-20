@@ -1,0 +1,9 @@
+node_modules
+.nx
+.git
+.vscode
+*.log
+.mvn
+out
+bin
+obj

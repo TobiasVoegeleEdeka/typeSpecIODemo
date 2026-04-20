@@ -1,0 +1,14 @@
+{
+  "name": "api-contract",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/api-contract",
+  "targets": {
+    "compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsp compile libs/api-contract"
+      }
+    }
+  }
+}
