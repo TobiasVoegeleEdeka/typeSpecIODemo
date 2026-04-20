@@ -108,3 +108,29 @@ interface Documents {
   @get read(@path id: int32): Document | { @statusCode statusCode: 404 };
   @delete delete(@path id: int32): void | { @statusCode statusCode: 404 };
 }
+
+model Wegbeschreibung {
+  @visibility(Lifecycle.Read)
+  id: string;
+
+  @minLength(1)
+  startPoint: string;
+
+  @minLength(1)
+  destination: string;
+
+ @minLength(1)
+ Person: string;
+ 
+  @minValue(0)
+  estimatedMinutes: int32;
+}
+
+@route("/directions")
+@tag("Directions")
+interface Directions {
+  @get list(): Wegbeschreibung[];
+  @post create(@body directions: Wegbeschreibung): Wegbeschreibung;
+  @get read(@path id: string): Wegbeschreibung | { @statusCode statusCode: 404 };
+  @delete delete(@path id: string): void | { @statusCode statusCode: 404 };
+}

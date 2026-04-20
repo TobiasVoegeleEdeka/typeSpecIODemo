@@ -2,5 +2,15 @@
   "name": "backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
+  "projectType": "application",
+  "targets": {
+    "generate-api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvnw compile",
+        "cwd": "apps/backend"
+      }
+    }
+  },
   "tags": []
 }

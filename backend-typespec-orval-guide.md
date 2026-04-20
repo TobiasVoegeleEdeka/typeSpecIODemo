@@ -12,12 +12,13 @@
 │  Spring Boot REST    │   (Kontrakt ab-    │  libs/api-contract/  │
 │  Controller + Model  │    leiten/schreiben)│  main.tsp           │
 └─────────────────────┘                    └─────────────────────┘
-                                                      │
-                                          Schritt 2   │  npx tsp compile
-                                                      ▼
-                                           ┌─────────────────────┐
-                                           │  openapi.yaml        │
-                                           │  (auto-generiert)    │
+          ▲                                           │
+          │                               Schritt 2   │  npx tsp compile
+          │ Schritt 3.5                               ▼
+          │ (Generierung)                  ┌─────────────────────┐
+          │                                │  openapi.yaml        │
+          │                                │  (auto-generiert)    │
+          └────────────────────────────────│                      │
                                            └─────────────────────┘
                                                       │
                                           Schritt 3   │  npx orval
@@ -364,6 +365,85 @@ servers:
 
 ---
 
+## Schritt 3.5 – Backend-Code generieren (Java/Spring)
+
+Um sicherzustellen, dass das Backend exakt den in TypeSpec definierten Kontrakt einhält, generieren wir die Modelle und Controller-Interfaces direkt aus der `openapi.yaml`.
+
+### 1. Maven-Konfiguration (`pom.xml`)
+
+Fügen Sie das `openapi-generator-maven-plugin` hinzu. Wir nutzen die Option `interfaceOnly`, damit nur die Interfaces generiert werden, die Sie dann in Ihren Controllern implementieren.
+
+```xml
+<plugin>
+    <groupId>org.openapitools</groupId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
+    <version>7.11.0</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+            <configuration>
+                <inputSpec>${project.basedir}/../../libs/api-contract/openapi.yaml</inputSpec>
+                <generatorName>spring</generatorName>
+                <apiPackage>com.example.demo.api</apiPackage>
+                <modelPackage>com.example.demo.api.model</modelPackage>
+                <configOptions>
+                    <interfaceOnly>true</interfaceOnly>
+                    <useSpringBoot3>true</useSpringBoot3>
+                    <useTags>true</useTags>
+                    <openApiNullable>false</openApiNullable>
+                </configOptions>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### 2. Code generieren
+
+Führen Sie den Befehl im Root oder direkt im Backend-Verzeichnis aus:
+
+```bash
+# Via Nx (falls konfiguriert)
+npx nx run backend:generate-api
+
+# Oder direkt via Maven
+mvn clean compile
+```
+
+Die Dateien werden in `target/generated-sources/openapi/` erzeugt.
+
+### 3. Implementation im Controller
+
+Anstatt die Methoden manuell zu definieren, lassen Sie Ihren Controller einfach das generierte Interface implementieren.
+
+```java
+@RestController
+public class InventoryController implements InventoryApi { // ← Generiertes Interface
+
+    @Override
+    public ResponseEntity<List<Product>> inventoryList() {
+        // Logik hier implementieren
+        return ResponseEntity.ok(productService.findAll());
+    }
+
+    @Override
+    public ResponseEntity<Product> inventoryRead(String id) {
+        return productService.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+}
+```
+
+> [!TIP]
+> Durch die Nutzung der generierten Interfaces erhalten Sie sofort Compile-Fehler, wenn sich der Kontrakt in TypeSpec ändert und Sie die Implementation noch nicht angepasst haben.
+
+---
+
+---
+
 ## Schritt 4 – Orval konfigurieren
 
 ### `orval.config.js` im Projekt-Root
@@ -630,19 +710,19 @@ export class InventoryListComponent implements OnInit {
 #    → libs/api-contract/main.tsp editieren
 
 # 2. OpenAPI generieren
-npx tsp compile libs/api-contract/main.tsp
-# Ergebnis: libs/api-contract/openapi.yaml
+npx nx run api-contract:compile  # (oder npx tsp compile ...)
 
-# 3. Angular-Services + Models generieren
-npx orval
-# Ergebnis: libs/task-client/src/lib/generated/**
+# 3. Backend-Code generieren (Java Models + Interfaces)
+npx nx run backend:generate-api  # (oder mvn compile)
 
-# 4. Wrapper-Services schreiben und im Frontend nutzen
-#    → apps/frontend/src/app/services/**.service.ts
+# 4. Angular-Services + Models generieren
+npx nx run task-client:generate  # (oder npx orval)
+
+# 5. Implementation im Backend / Frontend nutzen
 ```
 
 > [!IMPORTANT]
-> **Goldene Regel:** Nur `main.tsp` editieren. `openapi.yaml` und alles unter `generated/` werden **immer** überschrieben. Geschäftslogik gehört in die Wrapper-Services, nie in den generierten Code.
+> **Goldene Regel:** Nur `main.tsp` editieren. `openapi.yaml`, die Java-Interfaces in `target/` und alles unter `generated/` im Frontend werden **immer** überschrieben. Logik gehört im Backend in den Controller (der das Interface implementiert) und im Frontend in die Wrapper-Services.
 
 ---
 
