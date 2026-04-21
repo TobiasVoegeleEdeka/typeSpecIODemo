@@ -27,7 +27,7 @@ public class MongoIndexInitializer {
         logger.info("Initializing MongoDB Indices (Manual/DOD Way)...");
 
         // Primary indexes on 'id' (mapped to _id) are automatic and unique by default.
-        // We only add secondary indexes or non-standard indexes here.
+        // Only secondary indexes or non-standard indexes here.
 
         // Index for Tasks
         mongoTemplate.indexOps(Task.class).ensureIndex(
