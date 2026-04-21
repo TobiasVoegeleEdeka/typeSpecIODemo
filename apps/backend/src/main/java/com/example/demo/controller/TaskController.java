@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class TaskController {
     public ResponseEntity<Task> read(@PathVariable int id) {
         return taskRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new SystemFault("Task not found", "NOT_FOUND", 404));
     }
 
     @PatchMapping("/{id}")
@@ -47,16 +48,16 @@ public class TaskController {
             );
             taskRepository.save(updated);
             return ResponseEntity.ok(updated);
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new SystemFault("Task not found", "NOT_FOUND", 404));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@PathVariable int id) {
-        if (taskRepository.findById(id).isPresent()) {
-            taskRepository.delete(id);
-            return ResponseEntity.noContent().build();
+        if (!taskRepository.findById(id).isPresent()) {
+            throw new SystemFault("Task not found", "NOT_FOUND", 404);
         }
-        return ResponseEntity.notFound().build();
+        taskRepository.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

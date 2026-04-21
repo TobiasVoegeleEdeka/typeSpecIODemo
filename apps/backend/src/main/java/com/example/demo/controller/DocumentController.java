@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Document;
 import com.example.demo.repository.DocumentRepository;
+import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,16 +41,16 @@ public class DocumentController {
     public ResponseEntity<Document> read(@PathVariable int id) {
         return documentRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new SystemFault("Document not found", "NOT_FOUND", 404));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@PathVariable int id) {
-        if (documentRepository.findById(id).isPresent()) {
-            documentRepository.delete(id);
-            return ResponseEntity.noContent().build();
+        if (!documentRepository.findById(id).isPresent()) {
+            throw new SystemFault("Document not found", "NOT_FOUND", 404);
         }
-        return ResponseEntity.notFound().build();
+        documentRepository.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

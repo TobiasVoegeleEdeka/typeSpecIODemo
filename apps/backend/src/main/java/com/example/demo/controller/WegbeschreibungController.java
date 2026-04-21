@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Wegbeschreibung;
 import com.example.demo.repository.WegbeschreibungRepository;
+import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,16 +43,16 @@ public class WegbeschreibungController {
     public ResponseEntity<Wegbeschreibung> read(@PathVariable String id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new SystemFault("Directions not found", "NOT_FOUND", 404));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        if (repository.findById(id).isPresent()) {
-            repository.delete(id);
-            return ResponseEntity.noContent().build();
+        if (!repository.findById(id).isPresent()) {
+            throw new SystemFault("Directions not found", "NOT_FOUND", 404);
         }
-        return ResponseEntity.notFound().build();
+        repository.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

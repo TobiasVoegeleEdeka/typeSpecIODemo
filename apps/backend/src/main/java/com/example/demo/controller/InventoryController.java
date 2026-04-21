@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Product;
 import com.example.demo.repository.InventoryRepository;
+import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class InventoryController {
     public ResponseEntity<Product> read(@PathVariable String id) {
         return inventoryRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new SystemFault("Product not found", "NOT_FOUND", 404));
     }
 
     @PatchMapping("/{id}")
@@ -51,16 +52,16 @@ public class InventoryController {
             );
             inventoryRepository.save(updated);
             return ResponseEntity.ok(updated);
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElseThrow(() -> new SystemFault("Product not found", "NOT_FOUND", 404));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@PathVariable String id) {
-        if (inventoryRepository.findById(id).isPresent()) {
-            inventoryRepository.delete(id);
-            return ResponseEntity.noContent().build();
+        if (!inventoryRepository.findById(id).isPresent()) {
+            throw new SystemFault("Product not found", "NOT_FOUND", 404);
         }
-        return ResponseEntity.notFound().build();
+        inventoryRepository.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

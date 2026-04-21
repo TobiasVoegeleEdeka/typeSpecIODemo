@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.LoginRequest;
 import com.example.demo.model.LoginResponse;
 import com.example.demo.model.UserProfile;
+import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AuthController {
             UserProfile user = new UserProfile("2", "user", Arrays.asList("READ_TASKS"));
             return ResponseEntity.ok(new LoginResponse("mock-user-token", user));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new SystemFault("Invalid credentials", "UNAUTHORIZED", 401);
         }
     }
 }

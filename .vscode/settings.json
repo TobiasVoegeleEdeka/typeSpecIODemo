@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "*.tsp": "typespec"
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
