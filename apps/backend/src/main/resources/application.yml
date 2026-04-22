@@ -2,6 +2,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/demo
+
+mongock:
+  migration-scan-package:
+    - com.example.demo.migrations
   
 server:
   port: 8081
