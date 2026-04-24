@@ -93,4 +93,49 @@ And join the Nx community:
 - [Discord](https://go.nx.dev/community)
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Docker Compose Setup
+
+The easiest way to get everything running in Docker is to use the provided setup scripts.
+
+### Automated Setup (Recommended)
+
+Run one of the following scripts from the project root. They will install dependencies, generate the API contract and clients, build the JAR and Angular files, and finally start the Docker containers.
+
+- **PowerShell**: `./setup-docker.ps1`
+- **Batch**: `setup-docker.bat`
+
+### Manual Steps
+
+If you prefer to run the steps manually:
+
+1.  **Dependencies**:
+    ```bash
+    npm install
+    ```
+2.  **API Contract & Clients**:
+    ```bash
+    # Generate openapi.yaml
+    npx tsp compile libs/api-contract/main.tsp
+    # Generate Angular services
+    npx orval
+    ```
+3.  **Build Artifacts**:
+    ```bash
+    # Backend JAR
+    cd apps/backend
+    ./mvnw clean package -DskipTests
+    cd ../..
+
+    # Frontend Assets
+    npx nx build frontend --configuration=production
+    ```
+4.  **Run Containers**:
+    ```bash
+    docker compose up -d --build
+    ```
+
+The applications will be available at:
+- **Frontend**: http://localhost:4200
+- **Backend**: http://localhost:8081
+- **MongoDB**: localhost:27017
+
