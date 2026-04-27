@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Product;
+import com.example.demo.api.model.Product;
 import com.example.demo.repository.InventoryRepository;
 import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;

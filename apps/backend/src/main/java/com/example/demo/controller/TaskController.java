@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Task;
+import com.example.demo.api.model.Task;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;

@@ -11,9 +11,7 @@ public class ErrorRelay {
 
     @ExceptionHandler(SystemFault.class)
     public ResponseEntity<ErrorResponse> handleFault(SystemFault fault) {
-        ErrorResponse response = new ErrorResponse();
-        response.setCode(fault.getCode());
-        response.setMessage(fault.getMessage());
+        ErrorResponse response = new ErrorResponse(fault.getCode(), fault.getMessage(), null);
         
         return ResponseEntity.status(fault.getStatus()).body(response);
     }

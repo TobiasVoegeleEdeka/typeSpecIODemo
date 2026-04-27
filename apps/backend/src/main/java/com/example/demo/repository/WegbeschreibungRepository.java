@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.Wegbeschreibung;
+import com.example.demo.api.model.Wegbeschreibung;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

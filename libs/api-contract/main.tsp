@@ -105,6 +105,10 @@ model Document {
   @minLength(1)
   @maxLength(255)
   name: string;
+
+  @minLength(1)
+  @maxLength(255)
+  documentType: string;
   
   @minLength(1)
   content: string;

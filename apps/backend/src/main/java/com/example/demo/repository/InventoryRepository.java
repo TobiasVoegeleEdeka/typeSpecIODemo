@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.Product;
+import com.example.demo.api.model.Product;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

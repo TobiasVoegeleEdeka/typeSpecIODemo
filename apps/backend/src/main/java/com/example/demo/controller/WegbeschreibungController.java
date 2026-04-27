@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Wegbeschreibung;
+import com.example.demo.api.model.Wegbeschreibung;
 import com.example.demo.repository.WegbeschreibungRepository;
 import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class WegbeschreibungController {
                 id,
                 directions.startPoint(),
                 directions.destination(),
-                directions.Person(),
+                directions.person(),
                 directions.estimatedMinutes()
         );
         return repository.save(newDirections);

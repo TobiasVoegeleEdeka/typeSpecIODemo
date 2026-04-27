@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.Document;
-import com.example.demo.model.Product;
-import com.example.demo.model.Task;
+import com.example.demo.api.model.Document;
+import com.example.demo.api.model.Product;
+import com.example.demo.api.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Document;
+import com.example.demo.api.model.Document;
 import com.example.demo.repository.DocumentRepository;
 import com.example.demo.exception.SystemFault;
 import org.springframework.http.HttpStatus;
@@ -29,11 +29,11 @@ public class DocumentController {
     @PostMapping
     public Document create(@RequestBody Document doc) {
         Document newDoc = new Document(
-            doc.id(),
-            doc.name(),
-            doc.content(),
-            LocalDateTime.now()
-        );
+                doc.id(),
+                doc.name(),
+                doc.content(),
+                doc.documentType(),
+                LocalDateTime.now());
         return documentRepository.save(newDoc);
     }
 

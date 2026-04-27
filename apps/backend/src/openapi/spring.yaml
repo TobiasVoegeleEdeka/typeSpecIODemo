@@ -1,0 +1,10 @@
+openapi-processor-mapping: v6
+options:
+  package-name: com.example.demo.api
+  model-type: record
+  bean-validation: jakarta
+
+map:
+  types:
+    - type: string:date-time => java.time.LocalDateTime
+    - type: array => java.util.List

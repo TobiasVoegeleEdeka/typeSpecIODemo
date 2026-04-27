@@ -45,31 +45,35 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>7.11.0</version>
+				<groupId>io.openapiprocessor</groupId>
+				<artifactId>openapi-processor-maven-plugin</artifactId>
+				<version>2026.1</version>
 				<executions>
 					<execution>
+						<id>openapi-processor</id>
 						<goals>
-							<goal>generate</goal>
+							<goal>process</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/../../libs/api-contract/openapi.yaml</inputSpec>
-							<generatorName>spring</generatorName>
-							<apiPackage>com.example.demo.api</apiPackage>
-							<modelPackage>com.example.demo.api.model</modelPackage>
-							
-							<configOptions>
-								<interfaceOnly>true</interfaceOnly>
-								<useSpringBoot3>true</useSpringBoot3>
-								<useTags>true</useTags>
-								<openApiNullable>false</openApiNullable>
-								<documentationProvider>none</documentationProvider>
-								<annotationLibrary>none</annotationLibrary>
-							</configOptions>
+							<id>spring</id>
+							<apiPath>${project.basedir}/../../libs/api-contract/openapi.yaml</apiPath>
+							<processor>spring</processor>
+							<options>
+								<values>
+									<targetDir>${project.build.directory}/generated-sources/openapi</targetDir>
+									<mapping>${project.basedir}/src/openapi/spring.yaml</mapping>
+								</values>
+							</options>
 						</configuration>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>io.openapiprocessor</groupId>
+						<artifactId>openapi-processor-spring</artifactId>
+						<version>2026.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>
@@ -85,7 +89,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+								<source>${project.build.directory}/generated-sources/openapi</source>
 							</sources>
 						</configuration>
 					</execution>
