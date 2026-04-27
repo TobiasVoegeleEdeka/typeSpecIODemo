@@ -1,18 +1,18 @@
 package com.example.demo.controller;
 
+import com.example.demo.api.api.TasksApi;
 import com.example.demo.api.model.Task;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.exception.SystemFault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks")
 @CrossOrigin(origins = "http://localhost:4200")
-public class TaskController {
+@Validated
+public class TaskController implements TasksApi {
 
     private final TaskRepository taskRepository;
 
@@ -20,44 +20,40 @@ public class TaskController {
         this.taskRepository = taskRepository;
     }
 
-    @GetMapping
-    public List<Task> list() {
+    @Override
+    public List<Task> tasksList() {
         return taskRepository.findAll();
     }
 
-    @PostMapping
-    public Task create(@RequestBody Task task) {
+    @Override
+    public Task tasksCreate(Task task) {
         return taskRepository.save(task);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Task> read(@PathVariable int id) {
+    @Override
+    public Task tasksRead(Integer id) {
         return taskRepository.findById(id)
-                .map(ResponseEntity::ok)
                 .orElseThrow(() -> new SystemFault("Task not found", "NOT_FOUND", 404));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable int id, @RequestBody Task taskUpdate) {
+    @Override
+    public Task tasksUpdate(Integer id, Task taskUpdate) {
         return taskRepository.findById(id).map(existing -> {
             Task updated = new Task(
-                id,
-                taskUpdate.title() != null ? taskUpdate.title() : existing.title(),
-                taskUpdate.description() != null ? taskUpdate.description() : existing.description(),
-                taskUpdate.completed()
-            );
+                    id,
+                    taskUpdate.title() != null ? taskUpdate.title() : existing.title(),
+                    taskUpdate.description() != null ? taskUpdate.description() : existing.description(),
+                    taskUpdate.completed());
             taskRepository.save(updated);
-            return ResponseEntity.ok(updated);
+            return updated;
         }).orElseThrow(() -> new SystemFault("Task not found", "NOT_FOUND", 404));
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    @Override
+    public void tasksDelete(Integer id) {
         if (!taskRepository.findById(id).isPresent()) {
             throw new SystemFault("Task not found", "NOT_FOUND", 404);
         }
         taskRepository.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

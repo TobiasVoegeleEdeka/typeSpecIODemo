@@ -110,6 +110,11 @@ model Document {
   @maxLength(255)
   documentType: string;
   
+  @minLength(36)
+  @maxLength(36)
+  documentUUID: string;
+
+
   @minLength(1)
   content: string;
   
